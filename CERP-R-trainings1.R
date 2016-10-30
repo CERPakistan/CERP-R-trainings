@@ -179,3 +179,9 @@ iris %>% head(10) # Place 'lhs' as the first argument in 'rhs' call
 
 m <- lm(Sepal.Length ~ Sepal.Width + Petal.Length, data = dat)
 summary(m)
+
+##################
+## Export data: ##
+##################
+
+write.csv(dat, 'iris.csv')
