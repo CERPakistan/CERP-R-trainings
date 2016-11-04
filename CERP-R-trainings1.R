@@ -7,6 +7,8 @@
 #################
 
 # R: programming language for statistical calculation
+# Open-source
+# Interpreted language > access via a command line-like interpreter
 
 # RStudio: integrated development environment (IDE) that allows users to easily develop programs in R
 
@@ -56,54 +58,76 @@ typeof(a)
 ## Basic object types: ##
 #########################
 
-# Vector: sequence of data elements of the same basic type; can include numerical values, logical values or strings
+# Vector: an ordered sequence of data elements of the same basic type; can include numerical values, logical values or strings
 
 b
 length(b)
 
+# Matrix: a vector with 2-dimensional shape information (can also specify row/column names)
+
+X = matrix(1:6, nrow = 3, ncol = 2)
+X
+
+colnames(X) <- c('A', 'B')
+X
+
+# Array: matrix is special 2D case of an array/vector is 1D case of an array; an array can have one, two or more dimensions
+
 # List: a generic vector containing other objects (not necessarily of the same object type)
+# Can include: numeric vecotrs, character/string vectors, matrices, arrays and other lists
 
 d <- list(b, c)
+names(d) <- c('b', 'c')
 d
 length(d)
 
-# List slicing: retrieve a list slice using a single square bracket operator, i.e. "[]"
+# List slicing: retrieve a *list slice* using a single square bracket operator, i.e. "[]"
 
 d[1] # Prints a slice containing the first member of list d (which is simply the vector b)
+d['b']
 
-d[[1]][1] # Prints a slice containing the first element of the first member of list b
+# Reference a *list member* directly with double square brackets, i.e. "[[]]"
+d[[1]]
+d[['b']]
+
+d[['b']][1] # Prints a slice containing the first element of the first member of list d, 'b'
 
 # data.frame: relational data table such that the columns determine variables and the rows contain observations;
-# Each column may be a different variable type. Every cell must have some value and each column in a data.frame must have the same
-# number of values, i.e. a cell entry must be equal to NA or empty string if the value is missing
+# Each column may be a different variable type. Every cell must have some value and each column in a data.frame
+# must have the same number of values, i.e. a cell entry must be equal to NA or empty string if the value is missing
 
 e_ <- cbind(b, c)
 e <- as.data.frame(e_)
 e
 
-names(e)
+colnames(e)
 typeof(e) # data.frames stored as lists
-class(e)
+is.data.frame(e)
 
 # Subsetting a data.frame (row/column slicing): can subset data.frame by column name, index or both
 
-d["c"]
-d[1, 2] # matrix form: d[i, j]
-d[1, "c"]
-d[1,]
-d[,2]
+e["c"]
+e[1, 2] # matrix form: d[i, j]
+e[1, "c"]
+e[1,]
+e[,2]
 
 #######################
 ## Load data into R: ##
 #######################
 
-data('iris')
+data('iris') # Existing base R data
 head(iris)
+
+is.data.frame(iris)
+write.csv(iris, 'iris.csv') # Writes data.frame as .csv file
+
 rm(iris) # Drop object
 
-dat <- read.csv('iris.csv') # Load .csv file
+dat <- read.csv('iris.csv') # Load .csv file as data.frame
 # df_name <- read.dta('file_name.dta') # Load Stata file
-class(dat)
+
+is.data.frame(dat)
 
 #############################
 ## Explore dat data.frame: ##
@@ -117,7 +141,7 @@ summary(dat)
 # Retrieve data.frame column using the dollar sign `$`
 
 head(dat$X)
-head(dat[,1])
+head(dat[ ,1])
 
 mean(dat$Sepal.Length)
 sd(dat$Sepal.Length)
@@ -131,6 +155,7 @@ sepal <- dat[, c('Sepal.Length', 'Sepal.Width')]
 
 head(sepal[sepal$Sepal.Length > 5, ]) # Subset on row condition via logical test
 head(subset(sepal, Sepal.Length > 5))
+
 head(sepal[with(sepal, Sepal.Length > 5 & Sepal.Width < 3), ]) # ... on multiple conditions
 head(subset(sepal, Sepal.Length > 5 & Sepal.Width < 3))
 
@@ -179,9 +204,3 @@ iris %>% head(10) # Place 'lhs' as the first argument in 'rhs' call
 
 m <- lm(Sepal.Length ~ Sepal.Width + Petal.Length, data = dat)
 summary(m)
-
-##################
-## Export data: ##
-##################
-
-write.csv(dat, 'iris.csv')
